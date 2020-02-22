@@ -65,59 +65,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="nave_menu">
-                            <nav class="navbar navbar-default " id="navmenu">
-                            	
-                                <div class="container-fluid">
-                                    <!-- Brand and toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                            <span class="sr-only">Toggle navigation</span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                        </button>
-                                        <a class="navbar-brand" href="#home">
-                                            <img src="assets/images/logo.png"/>
-                                        </a>
-                                    </div>
-	
-                                    <!-- Collect the nav links, forms, and other content for toggling -->
-
-
-
-                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                                        <ul class="nav navbar-nav navbar-right">
-                                            <li><a href="index.jsp">Home</a></li>
-                                            <li><a href="index.jsp#food">Food</a></li>
-                                            <li><a href="index.jsp#intake">Intake</a></li>
-                                            <li><a href="index.jsp#blog">Preparation</a></li>
-                                            <li><a href="index.jsp#portfolio">Combination</a></li>
-                                            <li><a href="index.jsp#choose"> About us</a></li>
-                                            <li><a href="index.jsp#contact">Contact</a></li>
-
-
-                                            <li>
-                                                <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="fa fa-search"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <form class="navbar-form" role="search">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="Search">
-                                                            </div>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-
-
-                                    </div>
-
-                                </div>
-                                
-                            </nav>
+                            <%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -126,16 +74,21 @@
 
             </div>
         </header> <!--End of header -->
-
+<% 
+						String action = request.getParameter("action");
+					%>
         <section class="secondPageIsi">
                 <div class="container">
     			<div class="row">
+    			<ol class="breadcrumb">
+						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
+						  <li class="breadcrumb-item active"><a href="index.jsp#food">Food</a></li>
+						  <li class="breadcrumb-item active">Allowed <%=  action %></li>
+						</ol>
 			<div class="col-sm-12">
 				<div class="panel panel-success">
 					<div class="panel-heading">
-					<% 
-						String action = request.getParameter("action");
-					%>
+					
 						<h3 class="panel-title">Lists of Allowed <%= action %></h3>
 						<div class="pull-right">
 							<span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
@@ -151,6 +104,7 @@
 							<tr>
 								<th>#</th>
 								<th>Foods</th>
+								<th>&nbsp;</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -179,7 +133,8 @@
 										%>
 										<tr>
 											<td><%= count %></td>
-											<td><a href="info.jsp?food=<%= food %>"><%= foodSpace %></a></td>
+											<td><%= foodSpace %></td>
+											<td><a href="info.jsp?food=<%= food %>" ><button class="btn btn-primary">Details</button></a></td>
 							</tr>
 							<% 
 										count++;

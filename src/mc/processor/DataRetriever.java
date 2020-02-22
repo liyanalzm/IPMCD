@@ -829,7 +829,7 @@ public class DataRetriever {
 				+ " WHERE { "
 				+ " ?subClass rdfs:subClassOf ?restriction . "
 				+ " ?restriction owl:onProperty mo:hasLevel; "
-				+ " owl:aValuesFrom ?dataRange. "
+				+ " owl:allValuesFrom ?dataRange. "
 				+ " FILTER(?subClass = mo:"+foodName+") "
 				+ " }";
 		
@@ -893,12 +893,20 @@ public class DataRetriever {
 		ArrayList<String> hierarchy = new ArrayList<String>();
 		hierarchy.add(foodName);
 		String parent = getParentClass(foodName);
-		while (!parent.equals("Food")) {
-			hierarchy.add(parent);
-			parent = getParentClass(parent);
-		}
-		hierarchy.add("Food");
 		
+		if((parent.equals("Shrubs")) || (parent.equals("Trees")) || (parent.equals("Climbers")) || (parent.equals("Other_Herbs")) ) {
+			while (!parent.equals("Herbs") ) {
+				hierarchy.add(parent);
+				parent = getParentClass(parent);
+			}
+			hierarchy.add("Herbs");
+		}else {
+			while (!parent.equals("Food") ) {
+				hierarchy.add(parent);
+				parent = getParentClass(parent);
+			}
+			hierarchy.add("Food");
+		}
 		return hierarchy;
 	}
 	
@@ -1414,6 +1422,78 @@ public class DataRetriever {
 		return allFoods;
 	}
 	
+	public ArrayList<String> getIntakes() {
+		ArrayList<String> classes = new ArrayList<String>();
+		//ArrayList<String> subclasses = new ArrayList<String>();
+		
+		String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ " PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+				+ " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+				+ " PREFIX mo: <http://www.semanticweb.org/ontologies/2013/2/OntologyMalayIndigenousHealthKnowledge.owl#> "
+				+ " SELECT DISTINCT ?subClass "
+				+ " WHERE { "
+				+ " ?subClass rdfs:subClassOf mo:Intake "
+				+ " } ";
+		System.out.println(queryString);
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		
+		ResultSet results = qe.execSelect();
+		List<String> vars = results.getResultVars();
+		while (results.hasNext()) {
+			QuerySolution qs = results.next();
+			for (String var : vars) {
+				String result = qs.get(var).toString();
+				classes.add(result.substring(result.indexOf('#')+1).trim());
+			}
+		}
+		// Important - free up resources used running the query
+		qe.close();
+		
+		return classes;
+	}
+	
+	public ArrayList<String> getPreparationMethods() {
+		ArrayList<String> classes = new ArrayList<String>();
+		//ArrayList<String> subclasses = new ArrayList<String>();
+		
+		String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ " PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+				+ " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+				+ " PREFIX mo: <http://www.semanticweb.org/ontologies/2013/2/OntologyMalayIndigenousHealthKnowledge.owl#> "
+				+ " SELECT DISTINCT ?subClass "
+				+ " WHERE { "
+				+ " {?subClass rdfs:subClassOf mo:Preparation}"
+				+ " UNION {  ?subClass rdfs:subClassOf mo:Cook  } "
+				+ " } ";
+		System.out.println(queryString);
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		
+		ResultSet results = qe.execSelect();
+		List<String> vars = results.getResultVars();
+		while (results.hasNext()) {
+			QuerySolution qs = results.next();
+			for (String var : vars) {
+				String result = qs.get(var).toString();
+				if(!(result.substring(result.indexOf('#')+1).trim().equalsIgnoreCase("Cook"))) {
+					classes.add(result.substring(result.indexOf('#')+1).trim());
+				}
+				
+			}
+		}
+		// Important - free up resources used running the query
+		qe.close();
+		
+		return classes;
+	}
+	
 	public ArrayList<String> getPreparationMethod(String foodName){
 		ArrayList<String> classes = new ArrayList<String>();
 		//ArrayList<String> subclasses = new ArrayList<String>();
@@ -1451,7 +1531,7 @@ public class DataRetriever {
 		return classes;
 	}
 	
-	public ArrayList<String> getDish(String methodName, String foodName){
+	public ArrayList<String> getDishForSpecificFood(String methodName, String foodName){
 		ArrayList<String> classes = new ArrayList<String>();
 		//ArrayList<String> subclasses = new ArrayList<String>();
 		
@@ -1562,7 +1642,7 @@ public class DataRetriever {
 		
 		return classes;
 	}
-	public ArrayList<String> getIntakeTime(String dishName){
+	public ArrayList<String> getIntakeTimeForDish(String dishName){
 		ArrayList<String> classes = new ArrayList<String>();
 		//ArrayList<String> subclasses = new ArrayList<String>();
 		
@@ -1636,7 +1716,7 @@ public class DataRetriever {
 		return classes;
 	}
 	
-	public ArrayList<String> getPurpose(String foodName){
+	public ArrayList<String> getPurposeOthers(String foodName){
 		ArrayList<String> classes = new ArrayList<String>();
 		//ArrayList<String> subclasses = new ArrayList<String>();
 		
@@ -1672,5 +1752,245 @@ public class DataRetriever {
 		
 		return classes;
 	}
+	
+	/** 
+	 * Retrieving dishes and food based on the intake time
+	 * @param indicator
+	 * @param intake
+	 * @return
+	 */
+	public ArrayList<String> getFoodsForIntake(String intake) {
+			
+		ArrayList<String> all = getAllIntakes();
+		ArrayList<String> dishFood = new ArrayList<String>();
+		ArrayList<String> intakes = new ArrayList<String>();
+		
+		for(int i=0;i<all.size();i++) {
+			dishFood.add(i,all.get(i).substring(0,all.get(i).indexOf("#")).trim());
+			intakes.add(i,all.get(i).substring(all.get(i).indexOf("#")+1).trim());
+		}
+		
+		ArrayList<String> dishIntake = new ArrayList<String>();
+		for(int i=0;i<dishFood.size();i++) {
+			if(intakes.get(i).equals(intake)) {
+				dishIntake.add(dishFood.get(i));
+			}
+		}
+		return dishIntake;
+	}
+	
+	public ArrayList<String> getFoodsForPreparation(String indicator, String method){
+		ArrayList<String> food = new ArrayList<String>();
+		
+		//Process of searching of food/dish that matches the lists of food/dish and put it in food arraylist
+		if(indicator.equals("food")) {
+			//Process of separating the food list and the preparation methods accordingly to the index number
+			ArrayList<String> all = getAllPreparations();
+			ArrayList<String> dishFood = new ArrayList<String>();
+			ArrayList<String> preps = new ArrayList<String>();
+			for(int i=0;i<all.size();i++) {
+				dishFood.add(i,all.get(i).substring(0,all.get(i).indexOf("#")).trim());
+				preps.add(i,all.get(i).substring(all.get(i).indexOf("#")+1).trim());
+			}
+			
+		
+		
+			
+			//Get all allowed foods
+			ArrayList<String> allFoods = getAllAllowedFoods();
+			//Compare list of food with current food/dish index
+			for(String f : allFoods) {
+				for(int i=0;i<dishFood.size();i++) {
+					if(dishFood.get(i).equals(f)) {
+						if(preps.get(i).equals(method)) {
+							food.add(dishFood.get(i));
+						}
+					}
+				}
+			}
+			
+			
+		}else {
+			
+			food = getPurposeOthers(method);
+		}
+		
+		return food;
+		
+	}
+	
+	/**
+	 * get all dishes
+	 * @return
+	 */
+	public ArrayList<String> getAllDishes() {
+		ArrayList<String> classes = new ArrayList<String>();
+		ArrayList<String> allMeats = new ArrayList<String>();
+		
+		String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ " PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+				+ " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+				+ " PREFIX mo: <http://www.semanticweb.org/ontologies/2013/2/OntologyMalayIndigenousHealthKnowledge.owl#> "
+				+ " SELECT DISTINCT ?subClass "
+				+ " WHERE { "
+				+ " ?subClass rdfs:subClassOf mo:Dish "
+				+ " } ";
+		
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		
+		ResultSet results = qe.execSelect();
+		List<String> vars = results.getResultVars();
+		while (results.hasNext()) {
+			QuerySolution qs = results.next();
+			for (String var : vars) {
+				String result = qs.get(var).toString();
+				classes.add(result.substring(result.indexOf('#')+1).trim());
+			}
+		}
+		// Important - free up resources used running the query
+		qe.close();
+		
+		// get all subclass of Meats, now start real process.
+		// idea daripada breadth first search
+		while (classes.size() > 0) {
+			String nextToTry = classes.get(0);
+			ArrayList<String> subClasses = getAllSubclasses(nextToTry);
+			
+			if (subClasses.size() == 0) {
+				// no more subclasses, it is the Food objects
+				allMeats.add(nextToTry);
+				classes.remove(0);
+			}
+			else {
+				// have subclasses, take all of them as next candidate
+				classes.addAll(subClasses);
+				classes.remove(0);
+			}
+		}
+		
+		return allMeats;
+	}
+	
+	/**
+	 * get all allowed food
+	 */
+	
+	public ArrayList<String> getAllAllowedFoods(){
+		ArrayList<String> allAllowed = new ArrayList<String>();
+		
+		ArrayList<String> allowedHerbs = getAllAllowedHerbs();
+		for(String herbs : allowedHerbs) {
+			allAllowed.add(herbs);
+		}
+		
+		ArrayList<String> allowedFruits = getAllAllowedFruits();
+		for(String fruits : allowedFruits) {
+			allAllowed.add(fruits);
+		}
+		
+		ArrayList<String> allowedMeats = getAllAllowedMeats();
+		for(String meats : allowedMeats) {
+			allAllowed.add(meats);
+		}
+		
+		ArrayList<String> allowedVegetables = getAllAllowedVegetables();
+		for(String veges : allowedVegetables) {
+			allAllowed.add(veges);
+		}
+		
+		ArrayList<String> allowedOthers = getAllAllowedOthers();
+		for(String others : allowedOthers) {
+			allAllowed.add(others);
+		}
+		
+		return allAllowed;
+	}
+	
+	/**
+	 * get all intake time
+	 * @return
+	 */
+	public ArrayList<String> getAllIntakes() {
+		
+		String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ " PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+				+ " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+				+ " PREFIX mo: <http://www.semanticweb.org/ontologies/2013/2/OntologyMalayIndigenousHealthKnowledge.owl#> "
+				+ " SELECT ?subClass ?dataRange "
+				+ " WHERE { "
+				+ " ?subClass ?predicate ?object. "
+				+ " ?object owl:onProperty mo:hasIntakeTime; "
+				+ " owl:someValuesFrom ?dataRange. "
+				+ "}";
+		
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		
+		ResultSet results = qe.execSelect();
+		List<String> vars = results.getResultVars();
+		ArrayList<String> restrictions = new ArrayList<String>();
+		
+		while (results.hasNext()) {
+			QuerySolution qs = results.next();
+			String result = qs.get(vars.get(0)).toString();
+			String food = result.substring(result.indexOf('#')+1).trim();
+			result = qs.get(vars.get(1)).toString();
+			String res = result.substring(result.indexOf('#')+1).trim();
+			String combined = food.concat("#"+res);
+			restrictions.add(combined);
+		}
+		
+		// Important - free up resources used running the query
+		qe.close();
+		
+		return restrictions;
+	}
+	
+public ArrayList<String> getAllPreparations() {
+		
+		String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+				+ " PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+				+ " PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+				+ " PREFIX mo: <http://www.semanticweb.org/ontologies/2013/2/OntologyMalayIndigenousHealthKnowledge.owl#> "
+				+ " SELECT ?subClass ?dataRange "
+				+ " WHERE { "
+				+ " ?subClass ?predicate ?object. "
+				+ " ?object owl:onProperty mo:hasPreparationMethod; "
+				+ " owl:someValuesFrom ?dataRange. "
+				+ "}";
+		
+		Query query = QueryFactory.create(queryString, Syntax.syntaxARQ);
+		
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, model);
+		
+		ResultSet results = qe.execSelect();
+		List<String> vars = results.getResultVars();
+		ArrayList<String> restrictions = new ArrayList<String>();
+		
+		while (results.hasNext()) {
+			QuerySolution qs = results.next();
+			String result = qs.get(vars.get(0)).toString();
+			String food = result.substring(result.indexOf('#')+1).trim();
+			result = qs.get(vars.get(1)).toString();
+			String res = result.substring(result.indexOf('#')+1).trim();
+			String combined = food.concat("#"+res);
+			restrictions.add(combined);
+		}
+		
+		// Important - free up resources used running the query
+		qe.close();
+		
+		return restrictions;
+	}
+
 	
 }

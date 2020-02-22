@@ -35,8 +35,7 @@
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        
-        <style>
+         <style>
 		.clickable{
 		    cursor: pointer;   
 		}
@@ -52,7 +51,6 @@
 			display: none;
 		}
         </style>
-       
     </head>
     <body data-spy="scroll" data-target=".navbar-collapse">
         <!--[if lt IE 8]>
@@ -64,8 +62,7 @@
             <div class="secondPage">
                 <div class="container">
                     <div class="row">
-                        <div class="nave_menu">
-                           <%@ include file="navSecond.jsp" %>
+                        <div class="nave_menu"><%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -74,83 +71,124 @@
 
             </div>
         </header> <!--End of header -->
-<% 
-						String action = request.getParameter("action");
-					%>
+
+
+
+
+
         <section class="secondPageIsi">
                 <div class="container">
-    			<div class="row">
-    			<ol class="breadcrumb">
-						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
-						  <li class="breadcrumb-item active"><a href="index.jsp#food">Food</a></li>
-						  <li class="breadcrumb-item active">Restricted <%=  action %></li>
-						</ol>
-			<div class="col-sm-12">
-				<div class="panel panel-success">
-					<div class="panel-heading">
-					
-						<h3 class="panel-title">Lists of Restricted <%= action %></h3>
-						<div class="pull-right">
-							<span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
-								<i class="fa fa-filter"></i>
-							</span>
-						</div>
-					</div>
-					<div class="panel-body">
-						<input type="text" class="form-control" id="task-table-filter" data-action="filter" data-filters="#task-table" placeholder="Filter Tasks" />
-					</div>
+                    <div class="row">
+                    <% String searchTerm = request.getParameter("searchTerm"); %>
+                    		<h2>Search results for "<%= searchTerm %>"</h2>
+                    		<div class="panel panel-success">
 					<table class="table table-hover" id="task-table">
 						<thead>
 							<tr>
 								<th>#</th>
-								<th>Foods</th>
+								<th>Results</th>
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
 						<tbody>
-						<% 
-								
-							
-								DataRetriever dr = new DataRetriever();
-                                 ArrayList<String> notAllowedFood = null;
-                                 
-                                 /**To retrieve all allowed foods based on each category**/
-                                 if(action.equalsIgnoreCase("Vegetables")){
-                                	 	notAllowedFood = dr.getAllNotAllowedVegetables();
-                                 }else if(action.equalsIgnoreCase("Meats")){
-                                	 	notAllowedFood = dr.getAllNotAllowedMeats();
-                                 }else if(action.equalsIgnoreCase("Fruits")){
-                                	 	notAllowedFood = dr.getAllNotAllowedFruits();
-                                 }else if(action.equalsIgnoreCase("Herbs")){
-                                		notAllowedFood = dr.getAllNotAllowedHerbs();
-                                 }else if(action.equalsIgnoreCase("Others")){
-         							notAllowedFood = dr.getAllNotAllowedOthers();
-                                 }
-         							
-									int count = 1; 
-									if(notAllowedFood.size() > 0){
-								    for (String food : notAllowedFood ) {
-	         								
-								    			String foodSpace = food.replace("_", " ");
-							%>
+							<%
+						    	
+						    boolean found = false;
+						    int count=1;
+						    	if (searchTerm != null && !searchTerm.equals("")) {
+						    		searchTerm = searchTerm.toLowerCase();
+						    		DataRetriever dr = new DataRetriever();
+						    		ArrayList<String> allFood = dr.getAllFoods();
+						    		String origName;
+						    		
+						    		
+						    		
+						    		for (String food : allFood) {
+						    			origName = food;
+						    			food = food.replace('-', ' ');
+						    			food = food.replace('_', ' ');
+						    			food = food.toLowerCase();
+						    			if (food.indexOf(searchTerm) != -1) {
+						    				%>
 							<tr>
 								<td><%= count %></td>
-								<td><%= foodSpace %></td>
-								<td><a href="info.jsp?food=<%= food %>" ><button class="btn btn-primary">Details</button></a></td>
+								<td><%=food %></td>
+								<td style="text-align:right"><a href="info.jsp?food=<%= origName %>" ><button class="btn btn-primary">Details</button></a>&nbsp;<a href="ipdetails.jsp?food=<%= origName %>" ><button class="btn btn-primary">Recipes</button></a></td>
 							</tr>
 							<% 
-										count++;
-									}
-								    }else{ %>
-										<tr><td>The food searched is not in Malay Confinement Dietary List</td></tr>
-									<% }
-    							    %>
+								count++;
+						    			
+						    			found = true;
+					    			}
+						    		}
+					    		
+					    		
+					    	 	String searchTermPhyto = searchTerm;
+					    		searchTermPhyto = searchTermPhyto.toLowerCase();
+					    		ArrayList<String> allPhytochemicals = dr.getAllPhytochemicals();
+					    		
+					    		for (String phytochemical : allPhytochemicals) {
+					    			origName = phytochemical;    			
+					    			phytochemical = phytochemical.replace('-', ' ');
+					    			phytochemical = phytochemical.replace('_', ' ');
+					    			phytochemical = phytochemical.toLowerCase();
+					    			if (phytochemical.indexOf(searchTermPhyto) != -1) {
+					    				%>
+							<tr>
+								<td><%= count %></td>
+								<td><%=phytochemical %></td>
+								<td style="text-align:right"><a href="infoPhyto.jsp?phyto=<%= origName %>" ><button class="btn btn-primary">Details</button></a></td>
+							</tr>
+							<%
+								count++;
+					    			
+			    				found = true;
+					    			}
+					    		}
+						    	
+					    		String searchTermDish = searchTerm;
+					    		searchTermDish = searchTermDish.toLowerCase();
+					    		ArrayList<String> allDishes = dr.getAllDishes();
+					    		
+					    		for (String dish : allDishes) {
+					    			origName = dish;    			
+					    			dish = dish.replace('-', ' ');
+					    			dish = dish.replace('_', ' ');
+					    			dish = dish.toLowerCase();
+					    			if (dish.indexOf(searchTermDish) != -1) {
+					    				%>
+							<tr>
+								<td><%= count %></td>
+								<td><%=dish %></td>
+								<td style="text-align:right"><a href="ingredients.jsp?dish=<%= origName %>" ><button class="btn btn-primary">Ingredients</button></a></td>
+							</tr>
+							<%
+								count++;
+					    			
+			    				found = true;
+					    			}
+					    		}
+						    		}
+						    	
+						    	
+					    		
+			    	if(!found){
+						%>
+							<tr>
+								<td colspan="3">The term you searched is not in the Malay Confinement Dietary list</td>
+								
+								</tr>
+									<% } %>
 						</tbody>
 					</table>
 				</div>
-			</div>
-		</div>
-                    
+                    						
+											
+											
+										
+									
+                  							
+                     </div>
                 </div>
         </section>
         

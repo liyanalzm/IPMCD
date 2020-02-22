@@ -824,7 +824,7 @@ input::-ms-input-placeholder {
 .single_mixi_portfolio{
     position:relative;
     float: left;
-    border: 3px solid #fff;
+    border: 3px solid #f1eee6;
     width:100%;
 }
 .single_mixi_portfolio img{

@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="assets/css/plugins.css" />
 
         <!--Theme custom css -->
-        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/styleSecond.css">
 
         <!--Theme Responsive css-->
         <link rel="stylesheet" href="assets/css/responsive.css" />
@@ -49,58 +49,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="nave_menu">
-                            <nav class="navbar navbar-default " id="navmenu">
-                            	
-                                <div class="container-fluid">
-                                    <!-- Brand and toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                            <span class="sr-only">Toggle navigation</span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                        </button>
-                                        <a class="navbar-brand" href="#home">
-                                            <img src="assets/images/logo.png"/>
-                                        </a>
-                                    </div>
-	
-                                    <!-- Collect the nav links, forms, and other content for toggling -->
-
-
-
-                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                                        <ul class="nav navbar-nav navbar-right">
-                                            <li><a href="index.jsp">Home</a></li>
-                                            <li><a href="index.jsp#intake">Intake</a></li>
-                                            <li><a href="index.jsp#blog">Preparation</a></li>
-                                            <li><a href="index.jsp#portfolio">Combination</a></li>
-                                            <li><a href="index.jsp#choose"> About us</a></li>
-                                            <li><a href="index.jsp#contact">Contact</a></li>
-
-
-                                            <li>
-                                                <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="fa fa-search"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <form class="navbar-form" role="search">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="Search">
-                                                            </div>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-
-
-                                    </div>
-
-                                </div>
-                                
-                            </nav>
+                            <%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -113,40 +62,66 @@
         <section class="secondPageIsi">
                 <div class="container">
 		    			<div class="row">
+		    			 
 					<div class="col-sm-12">
 						<section id="portfolio" class="portfolio">
             <div class="container">
                 <div class="row">
-                    <div class="main_mix_content text-center sections">
-                        <div class="head_title">
-                            <h2>Dishes for <%=  request.getParameter("intake") %>.</h2>
+                
+                    <div class="main_mix_content sections">
+                    <ol class="breadcrumb">
+						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
+						  <li class="breadcrumb-item active"><a href="index.jsp#intake">Intake</a></li>
+						  <li class="breadcrumb-item active"><%=  request.getParameter("intake") %></li>
+						</ol>
+                        <div class="head_title text-center ">
+                            <h2>Suggestions for <%=  request.getParameter("intake") %>.</h2>
 
                         <div id="mixcontent" class="mixcontent">
                         
                             <%
                             String intake = request.getParameter("intake");
-    DataRetriever dr = new DataRetriever();
-    ArrayList<String> dishes = dr.getDishes(intake);
-    String dishReplace = "";
-    for (String dish : dishes ) {
-    	dishReplace = dish.replace("_", " ");
-    	%>
-                            <div class="col-md-4 mix vege no-padding">
+						    DataRetriever dr = new DataRetriever();
+						    ArrayList<String> dishes = dr.getFoodsForIntake(intake);
+						    String dishReplace = "";
+						  
+						    for (String dish : dishes ) {
+						    	dishReplace = dish.replace("_", " ");
+						    	if(dr.getParentClass(dish).equals("Dish")){
+						    	%>
+                            <div class="col-md-4 mix no-padding">
                                 <div class="single_mixi_portfolio">
                                     <img src="assets/images/<%= dishReplace %>.jpg" alt="<%= dishReplace %>" />
                                     <div class="mixi_portfolio_overlay">
                                         <div class="overflow_hover_text">
                                             <h2><%= dishReplace %></h2>
-                                            <p>CLICK TO KNOW MORE</p>
-                                            <a href="combination.jsp?combination=<%= dish %>"><i class="fa fa-chevron-circle-right"></i></a>
+                                                <p>CLICK TO KNOW ITS INGREDIENTS</p>
+                                            <a href="ingredients.jsp?dish=<%= dish %>"><i class="fa fa-chevron-circle-right"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <%
-    }
-    
-    	%>
+						    	}else{
+						    		%>
+						    			<div class="col-md-4 mix no-padding">
+                                <div class="single_mixi_portfolio">
+                                    <img src="assets/images/<%= dishReplace %>.jpg" alt="<%= dishReplace %>" />
+                                    <div class="mixi_portfolio_overlay">
+                                        <div class="overflow_hover_text">
+                                            <h2><%= dishReplace %></h2>
+                                                <p>CLICK TO KNOW MORE</p>
+                                            <a href="ipdetails.jsp?food=<%= dish %>"><i class="fa fa-chevron-circle-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+						    		<%
+						    		
+						    	}
+						    	}
+						    
+						    	%>
 
                            
                             <div class="gap"></div>

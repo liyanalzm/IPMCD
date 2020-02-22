@@ -29,29 +29,13 @@
         <link rel="stylesheet" href="assets/css/plugins.css" />
 
         <!--Theme custom css -->
-        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/styleSecond.css">
 
         <!--Theme Responsive css-->
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        
-        <style>
-		.clickable{
-		    cursor: pointer;   
-		}
 
-		.panel-heading div {
-			margin-top: -18px;
-			font-size: 15px;
-		}
-		.panel-heading div span{
-			margin-left:5px;
-		}
-		.panel-body{
-			display: none;
-		}
-        </style>
        
     </head>
     <body data-spy="scroll" data-target=".navbar-collapse">
@@ -65,7 +49,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="nave_menu">
-                           <%@ include file="navSecond.jsp" %>
+                            <%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -74,82 +58,55 @@
 
             </div>
         </header> <!--End of header -->
-<% 
-						String action = request.getParameter("action");
-					%>
+
         <section class="secondPageIsi">
                 <div class="container">
-    			<div class="row">
-    			<ol class="breadcrumb">
-						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
-						  <li class="breadcrumb-item active"><a href="index.jsp#food">Food</a></li>
-						  <li class="breadcrumb-item active">Restricted <%=  action %></li>
-						</ol>
-			<div class="col-sm-12">
-				<div class="panel panel-success">
-					<div class="panel-heading">
-					
-						<h3 class="panel-title">Lists of Restricted <%= action %></h3>
-						<div class="pull-right">
-							<span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
-								<i class="fa fa-filter"></i>
-							</span>
-						</div>
+		    			<div class="row">
+					<div class="col-sm-12">
+						<section id="portfolio" class="portfolio">
+            <div class="container">
+                <div class="row">
+                    <div class="main_mix_content text-center sections">
+                        <div class="head_title">
+                            <h2>Ingredients for <%=  request.getParameter("dish").replace("_", " ") %>.</h2>
+
+                        <div id="mixcontent" class="mixcontent">
+                        
+                            <%
+                            String getDish = request.getParameter("dish");
+						    DataRetriever dr = new DataRetriever();
+						    ArrayList<String> dishes = dr.getIngredient(getDish);
+						    String dishReplace = "";
+						    for (String dish : dishes ) {
+						    	dishReplace = dish.replace("_", " ");
+						    	%>
+                            <div class="col-md-4 mix no-padding">
+                                <div class="single_mixi_portfolio">
+                                    <img src="assets/images/<%= dishReplace %>.jpg" alt="<%= dishReplace %>" />
+                                    <div class="mixi_portfolio_overlay">
+                                        <div class="overflow_hover_text">
+                                            <h2><%= dishReplace %></h2>
+                                                <p>CLICK TO KNOW MORE</p>
+                                            <a href="ipdetails.jsp?food=<%= dish %>"><i class="fa fa-chevron-circle-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%
+						    }
+						    
+						    	%>
+
+                           
+                            <div class="gap"></div>
+                        </div>
+                    </div>                     
+                </div>
+            </div>
+            </div>
+        </section> <!-- End of portfolio two Section -->       
 					</div>
-					<div class="panel-body">
-						<input type="text" class="form-control" id="task-table-filter" data-action="filter" data-filters="#task-table" placeholder="Filter Tasks" />
-					</div>
-					<table class="table table-hover" id="task-table">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>Foods</th>
-								<th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-						<% 
-								
-							
-								DataRetriever dr = new DataRetriever();
-                                 ArrayList<String> notAllowedFood = null;
-                                 
-                                 /**To retrieve all allowed foods based on each category**/
-                                 if(action.equalsIgnoreCase("Vegetables")){
-                                	 	notAllowedFood = dr.getAllNotAllowedVegetables();
-                                 }else if(action.equalsIgnoreCase("Meats")){
-                                	 	notAllowedFood = dr.getAllNotAllowedMeats();
-                                 }else if(action.equalsIgnoreCase("Fruits")){
-                                	 	notAllowedFood = dr.getAllNotAllowedFruits();
-                                 }else if(action.equalsIgnoreCase("Herbs")){
-                                		notAllowedFood = dr.getAllNotAllowedHerbs();
-                                 }else if(action.equalsIgnoreCase("Others")){
-         							notAllowedFood = dr.getAllNotAllowedOthers();
-                                 }
-         							
-									int count = 1; 
-									if(notAllowedFood.size() > 0){
-								    for (String food : notAllowedFood ) {
-	         								
-								    			String foodSpace = food.replace("_", " ");
-							%>
-							<tr>
-								<td><%= count %></td>
-								<td><%= foodSpace %></td>
-								<td><a href="info.jsp?food=<%= food %>" ><button class="btn btn-primary">Details</button></a></td>
-							</tr>
-							<% 
-										count++;
-									}
-								    }else{ %>
-										<tr><td>The food searched is not in Malay Confinement Dietary List</td></tr>
-									<% }
-    							    %>
-						</tbody>
-					</table>
 				</div>
-			</div>
-		</div>
                     
                 </div>
         </section>

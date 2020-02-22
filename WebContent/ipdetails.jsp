@@ -56,58 +56,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="nave_menu">
-                            <nav class="navbar navbar-default " id="navmenu">
-                            	
-                                <div class="container-fluid">
-                                    <!-- Brand and toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                            <span class="sr-only">Toggle navigation</span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                        </button>
-                                        <a class="navbar-brand" href="#home">
-                                            <img src="assets/images/logo.png"/>
-                                        </a>
-                                    </div>
-	
-                                    <!-- Collect the nav links, forms, and other content for toggling -->
-
-
-
-                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                                        <ul class="nav navbar-nav navbar-right">
-                                            <li><a href="index.jsp">Home</a></li>
-                                            <li><a href="index.jsp#intake">Intake</a></li>
-                                            <li><a href="index.jsp#blog">Preparation</a></li>
-                                            <li><a href="index.jsp#portfolio">Combination</a></li>
-                                            <li><a href="index.jsp#choose"> About us</a></li>
-                                            <li><a href="index.jsp#contact">Contact</a></li>
-
-
-                                            <li>
-                                                <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="fa fa-search"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <form class="navbar-form" role="search">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="Search">
-                                                            </div>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-
-
-                                    </div>
-
-                                </div>
-                                
-                            </nav>
+                            <%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -130,6 +79,11 @@
                         					<img src="assets/images/<%= getFood.replace("_"," ") %>.jpg" class="img-circle" height="180px"/><br/>
                             <h2><%=  getFood.replace("_"," ") %></h2>
 						</div>
+						<ol class="breadcrumb">
+						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
+						  <li class="breadcrumb-item active"><a href="index.jsp#portfolio">Recipes</a></li>
+						  <li class="breadcrumb-item active"><%=  getFood.replace("_"," ") %></li>
+						</ol>
 						
 						<!--  START CONTENT -->
                         <div id="mixcontent" class="mixcontent">
@@ -138,6 +92,7 @@
 						    DataRetriever dr = new DataRetriever();
 						    ArrayList<String> methodsList = dr.getPreparationMethod(getFood);
 						    String methodReplace = "";
+						    if(methodsList.size()>0){
 						    for (String method : methodsList ) {
 						    	methodReplace = method.replace("_", " ");
 						    	%>
@@ -155,43 +110,93 @@
 							    <!--  INNER OF PREPARATION METHOD WHICH ARE DISHES, INGREDIENTS AND INTAKE TIME -->
 							    <div id="<%= method %>" class="panel-collapse collapse">		
 							      <div class="panel-body">
-							         
+							         <%
+								       	if(method.equals("Raw")){ 
+								       		ArrayList<String> ingredientList = dr.getPurposeOthers(getFood);
+								       		if(ingredientList.size()>0){ %>
+								       		<h5> Suggestions for: </h5>
+	                      					<ul class="list-group">
+	                      					<%
+										    String ingReplace = "";
+										    for (String ing : ingredientList ) {
+											    	ingReplace = ing.replace("_", " ");
+											    	%>
+											    	
+											    	<!--  START LOOPING FOR INGREDIENTS -->
+											    	
+										        <li class="list-group-item"><%= ingReplace %></li>
+										    <% 
+										    } //tutup if purpose ada
+										    } // tutup looping inredient %>
+										        </ul>
+										        <!--  STOP LOOPING FOR INGREDIENTS -->
+										        
+										        <h5>Taken for: </h5>
+										        	<ul class="list-group">
+			                      					
+										  <%
+											ArrayList<String> intakeList = dr.getIntakeOthers(getFood);
+										    for (String intake : intakeList ) {
+											    	%>
+											    	<!--  START LOOPING FOR INTAKE TIME -->
+										        <li class="list-group-item"><%= intake %></li>
+										        <% } // tutup looping intakeList %>
+										        </ul>
+										        <!--  STOP LOOPING FOR INTAKE TIME -->
+									        
+									      <% }//tutup if raw
+									    else{ %>
+									    
 							      <%
-								    ArrayList<String> dishList = dr.getDish(method,getFood);
+								    ArrayList<String> dishList = dr.getDishForSpecificFood(method,getFood);
 								    String dishReplace = "";
 								    if(dishList.size()>0){
-								    for (String dish : dishList ) {
-								    	dishReplace = dish.replace("_", " ");
-								    	
-								    	%>
-								    	<!--  START LOOPING FOR DISHES WHERE THERE ARE THIS CURRENT FOOD AS AN INGREDIENT -->
-								    	 <div class="panel-group" id="accordion2">
-							              <div class="panel panel-default">
-							                  <div class="panel-heading">
-							                      <h4 class="panel-title">
-							        <a data-toggle="collapse" data-parent="#accordion2" href="#<%= dish %>">
-							        <img src="assets/images/<%= dishReplace %>.jpg" alt="" height="30px" /> &nbsp;<%= dishReplace %>
-							        </a>
-							        </h4>
-							        </div>
-							        <!--  INNER OF DISHES WHICH ARE INGREDIENTS AND INTAKE TIME -->
-							        <div id="<%= dish %>" class="panel-collapse collapse">
-                      					<div class="panel-body">
-                      					<h5> Ingredients: </h5>
-                      					<ul class="list-group">
-                      					
-							       <%
-							       	
+									    for (String dish : dishList ) {
+									    	dishReplace = dish.replace("_", " ");
+									    	
+									    	%>
+									    	<!--  START LOOPING FOR DISHES WHERE THERE ARE THIS CURRENT FOOD AS AN INGREDIENT -->
+									    	 <div class="panel-group" id="accordion2">
+								              <div class="panel panel-default">
+								                  <div class="panel-heading">
+								                      <h4 class="panel-title">
+								        <a data-toggle="collapse" data-parent="#accordion2" href="#<%= dish %>">
+								        <img src="assets/images/<%= dishReplace %>.jpg" alt="" height="30px" /> &nbsp;<%= dishReplace %>
+								        </a>
+								        </h4>
+								        </div>
+								        <!--  INNER OF DISHES WHICH ARE INGREDIENTS AND INTAKE TIME -->
+								        <div id="<%= dish %>" class="panel-collapse collapse">
+	                      					<div class="panel-body">
+	                      					
+	                      					
+								       <h5> Ingredients: </h5>
+	                      					<ul class="list-group">
+									    <% 
 								    ArrayList<String> ingredientList = dr.getIngredient(dish);
+									 
 								    String ingReplace = "";
 								    for (String ing : ingredientList ) {
 								    	ingReplace = ing.replace("_", " ");
+								    	boolean mainIngredient = false;
+								    	ArrayList<String> parents = dr.getFoodHierarchy(ing);
+								    	for(int i = 0; i<parents.size();i++){
+								    		if(parents.get(i).equals("Meat")){
+								    			mainIngredient = true;
+								    		}
+								    	}
+								    	
+								    	if(mainIngredient){								    	
 								    	%>
 								    	
 								    	<!--  START LOOPING FOR INGREDIENTS -->
 								    	
+							        <li class="list-group-item" style="background:#e6ffcc;"><%= ingReplace %></li>
+							        <% } else{ %>
 							        <li class="list-group-item"><%= ingReplace %></li>
-							        <% } %>
+							        <% 
+							        }//tutup else
+								    	} //tutup looping ingredients%>
 							        </ul>
 							        <!--  STOP LOOPING FOR INGREDIENTS -->
 							        
@@ -199,7 +204,7 @@
 							        	<ul class="list-group">
                       					
 							       <%
-								    ArrayList<String> intakeList = dr.getIntakeTime(dish);
+								    ArrayList<String> intakeList = dr.getIntakeTimeForDish(dish);
 								    for (String intake : intakeList ) {
 								    	%>
 								    	<!--  START LOOPING FOR INTAKE TIME -->
@@ -212,48 +217,58 @@
 							              </div>
 							          </div>
 							        
-							      <% }} %>
-<%  }else{ %>
-<div id="<%= method %>" class="panel-collapse collapse in">
-	<div class="panel-body">
-	<h5>Made into: </h5>
-							        	<ul class="list-group">
+							      <% }//tutup else
+									    }}
+								    }//tutup if dishlist size > 0 and raw 
+						    else{ %>
+								<div id="<%= method %>" class="panel-collapse collapse in">
+									<div class="panel-body">
+									
                       					
 							       <%
-								    ArrayList<String> purposeList = dr.getPurpose(getFood);
-								    for (String purpose : purposeList ) {
-								    	%>
-								    	<!--  START LOOPING FOR INTAKE TIME -->
-							        <li class="list-group-item"><%= purpose %></li>
-							        <% }%>
+								    ArrayList<String> purposeList = dr.getPurposeOthers(getFood);
+								       if(purposeList.size()>0){
+								    	   %>
+								    	   <h5>Suggestions for: </h5>
+								        	<ul class="list-group">
+								        	<%
+									    for (String purpose : purposeList ) {
+									    	%>
+									    	<!--  START LOOPING FOR INTAKE TIME -->
+								        <li class="list-group-item"><%= purpose %></li>
+								        <% 
+									    }//tutup if purpose ada
+								    } //tutup loping purpose%>
 							        </ul>
-	<h5> Taken for: </h5>
-	<ul class="list-group">
-	<%
-ArrayList<String> intake = dr.getIntakeOthers(getFood);
-for (String in : intake ) {
+									<h5> Taken for: </h5>
+									<ul class="list-group">
+									<%
+								ArrayList<String> intake = dr.getIntakeOthers(getFood);
+								for (String in : intake ) {
+									
+									%>
+										<!--  START LOOPING FOR INTAKE TIME -->
+								<li class="list-group-item"><%= in %></li>
+								<% } //tutup looping intake%>
+								</ul>
+								<!--  STOP LOOPING FOR INTAKE TIME -->
+								
+										 </div>
+								      </div>
+								  </div>
+								</div>
+								<%} //tutup else %> 
+								<!--  STOP LOOPING FOR DISHES-->
+								</div>
+								</div>
+								</div>
 	
-	%>
-		<!--  START LOOPING FOR INTAKE TIME -->
-<li class="list-group-item"><%= in %></li>
-<% }%>
-</ul>
-<!--  STOP LOOPING FOR INTAKE TIME -->
-
-		 </div>
-      </div>
-  </div>
-</div>
-<%} %> 
-<!--  STOP LOOPING FOR DISHES-->
-</div>
-</div>
-</div>
 	
 	
-	
-						    <% } %>
+						    <% }}else{ //tutup looping method%>
+                     <center><h4> No information available for this food/herb in this ontology model.</h4></center>
                      
+                     <% } %>
                      <!--  STOP LOOPING FOR PREPARATION METHOD-->      
                             <div class="gap"></div>
                         </div>

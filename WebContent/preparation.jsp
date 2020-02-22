@@ -62,59 +62,7 @@
             <div class="secondPage">
                 <div class="container">
                     <div class="row">
-                        <div class="nave_menu">
-                            <nav class="navbar navbar-default " id="navmenu">
-                            	
-                                <div class="container-fluid">
-                                    <!-- Brand and toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                            <span class="sr-only">Toggle navigation</span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                        </button>
-                                        <a class="navbar-brand" href="#home">
-                                            <img src="assets/images/logo.png"/>
-                                        </a>
-                                    </div>
-	
-                                    <!-- Collect the nav links, forms, and other content for toggling -->
-
-
-
-                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                                        <ul class="nav navbar-nav navbar-right">
-                                            <li><a href="index.jsp">Home</a></li>
-                                            <li><a href="index.jsp#intake">Intake</a></li>
-                                            <li><a href="index.jsp#blog">Preparation</a></li>
-                                            <li><a href="index.jsp#portfolio">Combination</a></li>
-                                            <li><a href="index.jsp#choose"> About us</a></li>
-                                            <li><a href="index.jsp#contact">Contact</a></li>
-
-
-                                            <li>
-                                                <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="fa fa-search"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <form class="navbar-form" role="search">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="Search">
-                                                            </div>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-
-
-                                    </div>
-
-                                </div>
-                                
-                            </nav>
+                        <div class="nave_menu"><%@ include file="navSecond.jsp" %>
                             </div>
                         </div>	
                     </div>
@@ -125,17 +73,23 @@
         </header> <!--End of header -->
 
 
-
-
-
-        <section class="secondPageIsi">
-                <div class="container">
-                    <div class="row">
-                    <% 
+<% 
 						String getCombi = request.getParameter("method");
                         	String combination = getCombi.replace("_"," ");
 					%>
-                    		<h2><%= combination %></h2>
+
+	
+        <section class="secondPageIsi">
+        
+                <div class="container">
+                    <div class="row">
+                    <ol class="breadcrumb">
+						  <li class="breadcrumb-item"><a href="index.jsp">Home</a></li>
+						  <li class="breadcrumb-item active"><a href="index.jsp#blog">Preparation Method</a></li>
+						  <li class="breadcrumb-item active"><%=  combination %></li>
+						</ol>
+                    		<h2><img src="assets/images/<%= combination %>.png" height="40px"> <%= combination %></h2>
+                    		
                         <div class="col-md-6">
 				<div class="panel panel-success">
 					<div class="panel-heading">
@@ -156,25 +110,33 @@
 							<tr>
 								<th>#</th>
 								<th>Foods</th>
+								<th>&nbsp;</th>
 							</tr>
 						</thead>
 						<tbody>
 						<% 
 							
 								DataRetriever dr = new DataRetriever();
-							    ArrayList<String> allowedVeges = dr.getAllAllowedVegetables();
+							    ArrayList<String> foods = dr.getFoodsForPreparation("food", getCombi);
 								int count = 1; 
-							    for (String veges : allowedVeges ) {
-							    	veges = veges.replace("_", " ");
+								if(foods.size()>0){
+							    for (String food : foods ) {
+							    	String foodReplace = food.replace("_", " ");
 							%>
 							<tr>
 								<td><%= count %></td>
-								<td><%= veges %></td>
+								<td><%= foodReplace %></td>
+								<td style="text-align:right"><a href="ipdetails.jsp?food=<%= food %>" ><button class="btn btn-primary">Details</button></a></td>
 							</tr>
 							<% 
 								count++;
 							}
+							    }else{
 							    %>
+							    	<tr>
+							    		<td colspan="3"> There is no food available for this type of preparation method.
+							    	</tr>
+							    <% } %>
 						</tbody>
 					</table>
 				</div>
@@ -182,11 +144,7 @@
 			  <div class="col-md-6">
 				<div class="panel panel-success">
 					<div class="panel-heading">
-					<% 
-						String getCombi1 = request.getParameter("method");
-                        	String combination1 = getCombi.replace("_"," ");
-					%>
-						<h3 class="panel-title">Lists of dishes</h3>
+						<h3 class="panel-title">Lists of dishes/purposes</h3>
 						<div class="pull-right">
 							<span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
 								<i class="fa fa-filter"></i>
@@ -197,29 +155,78 @@
 						<input type="text" class="form-control" id="task-table-filter" data-action="filter" data-filters="#task-table" placeholder="Filter Tasks" />
 					</div>
 					<table class="table table-hover" id="task-table">
-						<thead>
+						
+						<% 
+							
+							    ArrayList<String> dishes = dr.getFoodsForPreparation("dish", getCombi);
+								count = 1; 
+							    	if(dishes.size()>0){
+								if(!(dishes.get(0).equals("Storage")||dishes.get(0).equals("Reheat_Food"))){%>
+								<thead>
 							<tr>
 								<th>#</th>
-								<th>Foods</th>
+								<th>Dish</th>
+								<th>&nbsp;</th>
 							</tr>
 						</thead>
 						<tbody>
-						<% 
-							
-								DataRetriever dr1 = new DataRetriever();
-							    ArrayList<String> allowedVeges1 = dr.getAllAllowedVegetables();
-								int count1 = 1; 
-							    for (String veges : allowedVeges ) {
-							    	veges = veges.replace("_", " ");
+								<%
+								
+								if(dishes.size()>0){
+							    for (String dish : dishes ) {
+							    	
+							    	String dishReplace = dish.replace("_", " ");
 							%>
 							<tr>
 								<td><%= count %></td>
-								<td><%= veges %></td>
+								<td><%= dishReplace %></td>
+								<td style="text-align:right"><a href="ingredients.jsp?dish=<%= dish %>" ><button class="btn btn-primary">Ingredients</button></a></td>
 							</tr>
 							<% 
 								count++;
+							}}else{
+								%>
+								
+							    <thead>
+							<tr>
+								<th>#</th>
+								<th>Purpose</th>
+							</tr>
+						</thead>
+						<tbody>
+							    	<tr>
+							    		<td colspan="3"> There is no dish available for this type of preparation method.
+							    	</tr>
+								<%
 							}
+							    }else{
 							    %>
+							    <thead>
+							<tr>
+								<th>#</th>
+								<th>Purpose</th>
+							</tr>
+						</thead>
+						<tbody>
+								<tr>
+								<td><%= count %></td>
+								<td><%= dishes.get(0).replace("_"," ") %></td>
+								</tr>
+							    <% }} else{
+								%>
+								
+							    <thead>
+							<tr>
+								<th>#</th>
+								<th>Purpose</th>
+							</tr>
+						</thead>
+						<tbody>
+							    	<tr>
+							    		<td colspan="3"> There is no dish available for this type of preparation method.
+							    	</tr>
+								<%
+							}%>
 						</tbody>
 					</table>
 				</div>

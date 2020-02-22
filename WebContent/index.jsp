@@ -71,9 +71,8 @@
                                             <li><a href="#food">Food</a></li>
                                             <li><a href="#intake">Intake</a></li>
                                             <li><a href="#blog">Preparation</a></li>
-                                            <li><a href="#portfolio">Combination</a></li>
+                                            <li><a href="#portfolio">Recipes</a></li>
                                             <li><a href="#choose"> About us</a></li>
-                                            <li><a href="#contact">Contact</a></li>
 
 
                                             <li>
@@ -81,9 +80,9 @@
                                                     <span class="fa fa-search"></span></a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <form class="navbar-form" role="search">
+                                                        <form class="navbar-form" method="post" action="searchProcess.jsp" role="search">
                                                             <div class="form-group">
-                                                                <input type="text" class="form-control" placeholder="Search">
+                                                                <input type="text" name="searchTerm" class="form-control" placeholder="Search">
                                                             </div>
                                                         </form>
                                                     </li>
@@ -102,6 +101,24 @@
                 </div>
 
             </div>
+            <style>
+            		.btn {
+				    display: inline-block;
+				    min-width: 230px;
+				    padding: .4em;
+				    height: 45px;
+				    text-align: center;
+				    color: #fff;
+				    letter-spacing: 1px;
+				    margin: 0;
+				    font-size: 20px;
+				    border-radius: 40px;
+				    margin-top: 20px;
+				    transition: .5s; 
+				    border:0px;
+				
+				}
+            </style>
         </header> <!--End of header -->
 
 
@@ -115,10 +132,10 @@
                         <div class="col-sm-12 ">
                                     <div class="main_home wow fadeInUp" data-wow-duration="700ms">
                                         <h1>Malay Confinement Dietary</h1>
-                                        <p class="subtitle">Ontology Model and Web Semantic Representation</p>
+                                        <p class="subtitle">Ontology Model and Semantic Web Representation</p>
 
                                         <div class="home_btn">
-                                            <a href="#intake" class="btn btn-primary">LEARN MORE</a>
+                                            <a href="#food" class="btn btn-primary">LEARN MORE</a>
                                         </div>
 
                                     </div>
@@ -317,91 +334,46 @@
 
                             <div class="main_blog_content">
                                 <ul class="main_blog">
-                                		<a href="preparation.jsp?method=Freeze">
+                                <% 
+                               		DataRetriever dr = new DataRetriever();
+                                		ArrayList<String> preparations = dr.getPreparationMethods();
+                                		String desc = "";
+                                		for(String preparation : preparations){
+                                			
+                                			if(preparation.equals("Freeze")){
+                                				desc = "Storing food below 0 degree celsius.";
+                                			}else if(preparation.equals("Dry")){
+                                				desc = "Eliminating the moisture of the food to preserve it.";
+                                			}else if(preparation.equals("Raw")){
+                                				desc = "Eating the food as it is or blending it to make a juice.";
+                                			}else if(preparation.equals("Steaming")){
+                                				desc = "Boiling water below the food to cook it by the steam.";
+                                			}else if(preparation.equals("Frying")){
+                                				desc = "Cooking food by using a little bit of oil.";
+                                			}else if(preparation.equals("Boiling")){
+                                				desc = "Cooking food in water until bubbles pop out.";
+                                			}else if(preparation.equals("Grilling")){
+                                				desc = "Cooking food in the oven it putting it on grill rack.";
+                                			}else if(preparation.equals("Microwaving")){
+                                				desc = "Reheating food by using a microwave.";
+                                			}else if(preparation.equals("Cook_and_Drain")){
+                                				desc = "Steam, boil, grill or fry food then drain them.";
+                                			}else if(preparation.equals("Reheat")){
+                                				desc = "Reheating food by using a stove.";
+                                			}
+                                			
+                                %>
+                                		<a href="preparation.jsp?method=<%= preparation %>">
                                     <li class="single_blog_content">
                                         <div class="lol">
-                                        <img src="assets/images/Freeze.png"   /> </div>
-                                        <h4>FREEZE</h4>
-                                        <p>Storing food below 0 degree celsius.</p>
+                                        <img src="assets/images/<%= preparation %>.png"   /> </div>
+                                        <h4><%= preparation.replace("_", " ") %></h4>
+                                        <p><%= desc %></p>
 
                                     </li>
                                     </a>
-                                    <a href="preparation.jsp?method=Dry">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Dry.png" alt="" /></div>
-                                        <h4>DRY</h4>
-                                        <p>Eliminating the moisture of the food to preserve it.</p>
-
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Raw">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Raw.png" alt="" /></div>
-                                        <h4>RAW</h4>
-                                        <p>Eating the food as it is or blending it to make a juice.</p>
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Steaming">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Steaming.png" alt="" /></div>
-                                        <h4>STEAM</h4>
-                                        <p>Boiling water below the food to cook it by the steam.</p>
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Frying">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Frying.png" alt="" /></div>
-                                        <h4>FRY</h4>
-                                        <p>Cooking food by using a little bit of oil.</p>
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Boiling">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Boiling.png" alt="" /></div>
-                                        <h4>BOIL</h4>
-                                        <p>Cooking food in water until bubbles pop out.</p>
-
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Grilling">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Grilling.png" alt="" /></div>
-                                        <h4>GRILL</h4>
-                                        <p>Cooking food in the oven it putting it on grill rack.</p>
-
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Microwaving">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Microwaving.png" alt="" /></div>
-                                        <h4>MICROWAVE</h4>
-                                        <p>Reheating food by using a microwave.</p>
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Cook_and_Drain">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Cook_and_Drain.png" alt="" /></div>
-                                        <h4>COOK AND DRAIN</h4>
-                                        <p>Steam, boil, grill or fry food then drain them.</p>
-
-                                    </li>
-                                    </a>
-                                    <a href="preparation.jsp?method=Reheat">
-                                    <li class="single_blog_content">
-                                        <div class="lol">
-                                        <img src="assets/images/Reheat.png" alt="" /></div>
-                                        <h4>REHEAT</h4>
-                                        <p>Reheating food by using a stove.</p>
-                                    </li>
-                                    </a>
+                                    
+                                    <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -422,42 +394,25 @@
                             <div class="separator"></div>
 
                         </div>
-                        <a href="intake.jsp?intake=breakfast">
+                        <%
+                        		
+                        		ArrayList<String> intakes = dr.getIntakes();
+                        		for(String intake : intakes){
+                        %>
+                        <a href="intake.jsp?intake=<%= intake %>">
                         <div class="col-sm-4">
                             <div class="single_service">
                                 <div class="single_service_icon">
-                                    <img src="assets/images/apple.png" alt="" />
+                                    <img src="assets/images/<%= intake %>.png" alt="" />
                                 </div>
 
-                                <h3>BREAKFAST</h3>
-                                <p>Learn what you can take best for your breakfast based on midwives' and dietician's preference.</p>
+                                <h3><%= intake %></h3>
+                                <p>Learn what you can take best for your <%= intake.toLowerCase() %> based on midwives' and dietician's preference.</p>
                             </div>
                         </div>
                         </a>
-                        <a href="intake.jsp?intake=lunch">
-                        <div class="col-sm-4">
-                            <div class="single_service">
-                                <div class="single_service_icon">
-                                    <img src="assets/images/bawang.png" alt="" />
-                                </div>
-
-                                <h3>LUNCH</h3>
-                                <p>Learn what you can take best for your lunch based on midwives' and dietician's preference.</p>
-                            </div>
-                        </div>
-                        </a>
-                        <a href="intake.jsp?intake=dinner">
-                        <div class="col-sm-4">
-                            <div class="single_service">
-                                <div class="single_service_icon">
-                                    <img src="assets/images/fish.png" alt="" />
-                                </div>
-
-                                <h3>DINNER</h3>
-                                <p>Learn what you can take best for your dinner based on midwives' and dietician's preference.</p>
-                            </div>
-                        </div>
-					</a>
+                        
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -469,7 +424,7 @@
                 <div class="row">
                     <div class="main_mix_content text-center sections">
                         <div class="head_title">
-                            <h2>See which food can be combined together here.</h2>
+                            <h2>Learn more about the intake and preparation of food.</h2>
                         </div>
                         <div class="main_mix_menu">
                             <ul>
@@ -484,7 +439,7 @@
 
                         <div id="mixcontent" class="mixcontent">
                             <%
-    DataRetriever dr = new DataRetriever();
+   
     ArrayList<String> allowedVeges = dr.getAllAllowedVegetables();
     
     for (String veges : allowedVeges ) {
@@ -612,83 +567,13 @@ for (String others : allowedOthers ) {
                                 </div>
 
                                 <h2>Malay Confinement Dietary</h2>
-                                <p>This website is a semantic web representation of an ontology model that focuses on the dietary of Malay mothers in confinement. The intake and preparation scope is an integration from the previous ontology models which are the combinations of the Malay Confinement Dietary, medicinal herbs and phytochemicals. Check out the previous ontology model <a href="../index.jsp.html">here</a>.</p>
+                                <p> This website is a semantic web representation of an ontology model that focuses on the dietary of Malay mothers in confinement. The intake and preparation scope is an integration from the previous ontology models which are the combinations of the Malay Confinement Dietary, medicinal herbs and phytochemicals.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-
-        
-
-
-        <section id="contact" class="footer_widget">
-            <div class="container">
-                <div class="row">
-                    <div class="main_widget">
-
-
-                        <div class="row">
-
-                            <div class="col-sm-4  col-xs-12">
-                                <div class="single_widget wow fadeIn" data-wow-duration="800ms">
-                                    <h4 class="footer_title">CONTACT</h4>
-                                    <div class="separator4"></div>
-                                    <ul>
-                                        <li><a href=""><i class="fa fa-envelope"></i> info@guitarchoose.com</a></li>
-                                        <li><a href=""><i class="fa fa-phone"></i> 0123 456 789 0112</a></li>
-                                        <li><a href=""><i class="fa fa-map-marker"></i> Greenplatz Ben 29, Germany 60435</a></li>
-                                        <li><a href=""><i class="fa fa-fax"></i> (0012) 654 356 445</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4 col-xs-12">
-                                <div class="single_widget wow fadeIn" data-wow-duration="800ms">
-                                    <h4 class="footer_title">LATEST NEWS</h4>
-                                    <div class="separator4"></div>
-
-                                    <div class="footer_gellary">
-                                        <img src="assets/images/fg1.jpg" alt="" />
-                                        <img src="assets/images/fg2.jpg" alt="" />
-                                        <img src="assets/images/fg3.jpg" alt="" />
-                                        <img src="assets/images/fg4.jpg" alt="" />
-                                        <img src="assets/images/fg5.jpg" alt="" />
-                                        <img src="assets/images/fg6.jpg" alt="" />
-                                        <img src="assets/images/fg7.jpg" alt="" />
-                                        <img src="assets/images/fg8.jpg" alt="" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4 col-xs-12">
-                                <div class="single_widget wow fadeIn" data-wow-duration="800ms">
-                                    <div class="footer_logo">
-                                        <img src="assets/images/footerlogo.png" alt="" />
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut in egestas lectus. 
-                                        Etiam tempor odio tellus, at bibendum neque faucibus quis. Sed vel facilisis elit. </p>
-                                    <p>Nullam fringilla pharetra diam non accumsan. Morbi eget aliquam mauris. 
-                                        Etiam vehicula efficitur mi.</p>
-
-
-                                    <a class="weblink" href="https://bootstrapthemes.co">https://bootstrapthemes.co</a>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-
-
 
         <footer id="footer" class="footer">
             <div class="container">
